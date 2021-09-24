@@ -10,18 +10,21 @@ class OrderField(models.PositiveIntegerField):
     def pre_save(self, model_instance, add):
         if getattr(model_instance, self.attname) is None:
             try:
-                qs = self.model.objects.all()
-                if self.for_fields:
-                    query = {
-                        field: getattr(model_instance, field)
-                        for field in self.for_fields
-                    }
-                    qs = qs.filter(**query)
-                last_item = qs.latest(self.attname)
-                value = last_item.order + 1
+                value = self.get_next_order_value()
             except ObjectDoesNotExist:
                 value = 0
             setattr(model_instance, self.attname, value)
             return value
         else:
             return super().pre_save(model_instance, add)
+
+    def get_next_order_value(self, model_instance):
+        query_set = self.model.objects.all()
+        if self.for_fields:
+            query = {
+                field: getattr(model_instance, field)
+                for field in self.for_fields
+            }
+            query_set = query_set.filter(**query)
+            last_item = query_set.latest(self.attname)
+            return last_item.order + 1
