@@ -7,6 +7,7 @@ from django.contrib.auth.mixins import (
     LoginRequiredMixin,
     PermissionRequiredMixin,
 )
+from braces.views import CsrfExemptMixin, JsonRequestResponseMixin
 from django.views.generic.base import TemplateResponseMixin, View
 from .models import Course, Module, Content
 from .forms import ModuleFormSet
@@ -152,3 +153,21 @@ class ContentDeleteView(View):
         content.item.delete()
         content.delete()
         return redirect("course:module_content_list", module.id)
+
+
+class ModuleOrderView(CsrfExemptMixin, JsonRequestResponseMixin, View):
+    def post(self, request):
+        for id, order in self.request_json.items():
+            Module.objects.filter(id=id, course__owner=request.user).update(
+                order=order
+            )
+        return self.render_json_response({"saved": "OK"})
+
+
+class ContentOrderView(CsrfExemptMixin, JsonRequestResponseMixin, View):
+    def post(self, request):
+        for id, order in self.request_json.items():
+            Content.objects.filter(
+                id=id, module__course__owner=request.user
+            ).update(order=order)
+        return self.render_json_response({"saved": "OK"})
