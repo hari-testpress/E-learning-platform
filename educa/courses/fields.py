@@ -1,5 +1,6 @@
 from django.db import models
 from django.core.exceptions import ObjectDoesNotExist
+from django.db.models import expressions
 
 
 class OrderField(models.PositiveIntegerField):
@@ -9,10 +10,7 @@ class OrderField(models.PositiveIntegerField):
 
     def pre_save(self, model_instance, add):
         if getattr(model_instance, self.attname) is None:
-            try:
-                value = self.get_next_order_value()
-            except ObjectDoesNotExist:
-                value = 0
+            value = self.get_next_order_value(model_instance)
             setattr(model_instance, self.attname, value)
             return value
         else:
@@ -20,11 +18,14 @@ class OrderField(models.PositiveIntegerField):
 
     def get_next_order_value(self, model_instance):
         query_set = self.model.objects.all()
-        if self.for_fields:
-            query = {
-                field: getattr(model_instance, field)
-                for field in self.for_fields
-            }
-            query_set = query_set.filter(**query)
-            last_item = query_set.latest(self.attname)
-            return last_item.order + 1
+        try:
+            if self.for_fields:
+                query = {
+                    field: getattr(model_instance, field)
+                    for field in self.for_fields
+                }
+                query_set = query_set.filter(**query)
+                last_item = query_set.latest(self.attname)
+                return last_item.order + 1
+        except ObjectDoesNotExist:
+            return 0
