@@ -8,10 +8,12 @@ from django.contrib.auth.mixins import (
     PermissionRequiredMixin,
 )
 from django.views.generic.base import TemplateResponseMixin, View
-from .models import Course, Module, Content
+from django.views.generic.detail import DetailView
+from .models import Course, Module, Content, Subject
 from .forms import ModuleFormSet
 from django.forms.models import modelform_factory
 from django.apps import apps
+from django.db.models import Count
 
 
 class OwnerMixin(object):
@@ -152,3 +154,45 @@ class ContentDeleteView(View):
         content.item.delete()
         content.delete()
         return redirect("course:module_content_list", module.id)
+<<<<<<< HEAD
+=======
+
+
+class ModuleOrderView(CsrfExemptMixin, JsonRequestResponseMixin, View):
+    def post(self, request):
+        for id, order in self.request_json.items():
+            Module.objects.filter(id=id, course__owner=request.user).update(
+                order=order
+            )
+        return self.render_json_response({"saved": "OK"})
+
+
+class ContentOrderView(CsrfExemptMixin, JsonRequestResponseMixin, View):
+    def post(self, request):
+        for id, order in self.request_json.items():
+            Content.objects.filter(
+                id=id, module__course__owner=request.user
+            ).update(order=order)
+        return self.render_json_response({"saved": "OK"})
+
+
+class CourseListView(TemplateResponseMixin, View):
+    model = Course
+    template_name = "courses/course/list.html"
+
+    def get(self, request, subject=None):
+        subjects = Subject.objects.annotate(total_courses=Count("courses"))
+        courses = Course.objects.annotate(total_module=Count("modules"))
+        if subject:
+            subject = get_object_or_404(Subject, slug=subject)
+            courses = courses.filter(subject=subject)
+
+        return self.render_to_response(
+            {"subjects": subjects, "courses": courses, "subject": subject}
+        )
+
+
+class CourseDetailView(DetailView):
+    model = Course
+    template_name = "courses/course/detail.html"
+>>>>>>> f9a05f4 (Create list and detail view for courses)
