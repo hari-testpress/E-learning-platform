@@ -10,7 +10,7 @@ urlpatterns = [
     ),
     path(
         "enroll-course/",
-        views.StudentEnrollCourseView.as_view(),
+        views.student_enroll_course,
         name="enroll_course",
     ),
 ]
