@@ -25,4 +25,4 @@ def student_enroll_course(request):
     if form.is_valid():
         course = form.cleaned_data["course"]
         course.students.add(request.user)
-        redirect("students:student_course_detail", args=[course.id])
+        return redirect("students:student_course_detail", pk=course.id)
