@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     "embed_video",
     "rest_framework",
     "chat",
+    "channels",
 ]
 
 MIDDLEWARE = [
@@ -135,6 +136,8 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media/")
+
+ASGI_APPLICATION = "educa.routing.application"
 
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
