@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     "braces",
     "embed_video",
     "rest_framework",
+    "chat",
 ]
 
 MIDDLEWARE = [
