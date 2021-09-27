@@ -174,7 +174,6 @@ class ContentOrderView(CsrfExemptMixin, JsonRequestResponseMixin, View):
             ).update(order=order)
         return self.render_json_response({"saved": "OK"})
 
-
 class CourseListView(TemplateResponseMixin, View):
     model = Course
     template_name = "courses/course/list.html"
