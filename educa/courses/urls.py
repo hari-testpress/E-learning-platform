@@ -37,8 +37,6 @@ urlpatterns = [
         views.ContentDeleteView.as_view(),
         name="module_content_delete",
     ),
-<<<<<<< HEAD
-=======
     path(
         "module/order/", views.ModuleOrderView.as_view(), name="module_order"
     ),
@@ -55,5 +53,4 @@ urlpatterns = [
     path(
         "<slug:slug>/", views.CourseDetailView.as_view(), name="course_detail"
     ),
->>>>>>> f9a05f4 (Create list and detail view for courses)
 ]

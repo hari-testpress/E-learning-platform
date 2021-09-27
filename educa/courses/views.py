@@ -7,6 +7,7 @@ from django.contrib.auth.mixins import (
     LoginRequiredMixin,
     PermissionRequiredMixin,
 )
+from braces.views import CsrfExemptMixin, JsonRequestResponseMixin
 from django.views.generic.base import TemplateResponseMixin, View
 from django.views.generic.detail import DetailView
 from .models import Course, Module, Content, Subject
@@ -154,8 +155,6 @@ class ContentDeleteView(View):
         content.item.delete()
         content.delete()
         return redirect("course:module_content_list", module.id)
-<<<<<<< HEAD
-=======
 
 
 class ModuleOrderView(CsrfExemptMixin, JsonRequestResponseMixin, View):
@@ -195,4 +194,3 @@ class CourseListView(TemplateResponseMixin, View):
 class CourseDetailView(DetailView):
     model = Course
     template_name = "courses/course/detail.html"
->>>>>>> f9a05f4 (Create list and detail view for courses)
