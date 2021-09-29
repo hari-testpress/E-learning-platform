@@ -1,3 +1,4 @@
+from courses.api.permission import IsEnrolled
 from django.shortcuts import get_object_or_404
 from rest_framework import generics
 from rest_framework.views import APIView
@@ -54,7 +55,7 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
         methods=["get"],
         serializer_class=CourseWithContentsSerializer,
         authentication_classes=[BasicAuthentication],
-        permission_classes=[IsAuthenticated],
+        permission_classes=[IsAuthenticated, IsEnrolled],
     )
     def contents(self, request, *args, **kwargs):
         return self.retrieve(request, *args, **kwargs)
