@@ -6,6 +6,11 @@ urlpatterns = [
     path(
         "register/",
         views.StudentRegistrationView.as_view(),
-        name="student_registration",
+        name="registration",
+    ),
+    path(
+        "enroll-course/",
+        views.student_enroll_course,
+        name="enroll_course",
     ),
 ]

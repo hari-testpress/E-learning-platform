@@ -1,7 +1,10 @@
 from django.urls import reverse_lazy
-from django.views.generic.edit import CreateView
+from django.shortcuts import redirect
+from django.views.generic.edit import CreateView, FormView
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, login
+from django.contrib.auth.mixins import LoginRequiredMixin
+from .forms import CourseEnrollForm
 
 
 class StudentRegistrationView(CreateView):
@@ -15,3 +18,11 @@ class StudentRegistrationView(CreateView):
         user = authenticate(username=cd["username"], password=cd["password1"])
         login(self.request, user)
         return result
+
+
+def student_enroll_course(request):
+    form = CourseEnrollForm(request.POST)
+    if form.is_valid():
+        course = form.cleaned_data["course"]
+        course.students.add(request.user)
+        return redirect("students:student_course_detail", pk=course.id)
