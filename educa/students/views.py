@@ -16,11 +16,10 @@ class StudentRegistrationView(CreateView):
     success_url = reverse_lazy("students:student_course_list")
 
     def form_valid(self, form):
-        result = super().form_valid(form)
         cd = form.cleaned_data
         user = authenticate(username=cd["username"], password=cd["password1"])
         login(self.request, user)
-        return result
+        return super().form_valid(form)
 
 
 def student_enroll_course(request):
@@ -37,7 +36,7 @@ class StudentCourseListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         qs = super().get_queryset()
-        return qs.filter(students__in=[self.request.user])
+        return qs.filter(students=self.request.user)
 
 
 class StudentCourseDetailView(DetailView):
@@ -46,7 +45,7 @@ class StudentCourseDetailView(DetailView):
 
     def get_queryset(self):
         qs = super().get_queryset()
-        return qs.filter(students__in=[self.request.user])
+        return qs.filter(students=self.request.user)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
